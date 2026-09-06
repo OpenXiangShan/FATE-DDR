@@ -2,7 +2,23 @@
 
 > 英文版详见[README.md](./README.md).
 
-[TOC]
+- [FATE: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator](#fate-fpga-based-frequency-adaptive-timing-accurate-ddr-phy-emulator)
+  - [概述](#概述)
+  - [背景与动机](#背景与动机)
+  - [主要特性](#主要特性)
+  - [架构概览](#架构概览)
+    - [低频域（Low-Frequency Domain）](#低频域low-frequency-domain)
+    - [高频域（High-Frequency Domain）](#高频域high-frequency-domain)
+  - [仓库结构](#仓库结构)
+  - [环境依赖](#环境依赖)
+  - [部署说明](#部署说明)
+    - [例化必要的 IP](#例化必要的-ip)
+    - [例化 FATE](#例化-fate)
+    - [配置参数](#配置参数)
+    - [集成与验证](#集成与验证)
+    - [实验与结果](#实验与结果)
+  - [许可证](#许可证)
+  - [联系方式](#联系方式)
 
 ## 概述
 
