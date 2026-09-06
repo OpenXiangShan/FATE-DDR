@@ -69,6 +69,17 @@ FATE adopts a cross-clock-domain design and is divided into a low-frequency doma
 
 ![FATE architecture](./doc/fate-architecture.png "fate architecture")
 
+## Repository Structure
+
+    doc/            # Module-level design documentation
+    fifos/          # Simulation test environment for the FIFOs required by FATE
+    tcl/            # Tcl scripts for the IPs required by FATE
+    vsrc/           # FATE source code
+    wrapper/        # Reference code for the FATE wrapper
+    LICENSE.txt     # Open-source license
+    README_zh.md    # Chinese version of this document
+    README.md       # This document
+
 ## Environment Dependencies
 
 - FPGA platform: AMD Virtex™ UltraScale+™ VU19P FPGA
@@ -82,6 +93,10 @@ FATE adopts a cross-clock-domain design and is divided into a low-frequency doma
 - HostMC: Any memory controller IP compliant with DFI 3.1
 
 ## Deployment Instructions
+
+### Instantiating the Required IPs
+
+In your project, instantiate the IPs required by FATE. Use Vivado 2024.2 to execute the `tcl/ip_export_mig_phy.tcl` script, which will generate a MIG PHY IP that meets the requirements. In addition, the other three Tcl scripts in the `tcl/` directory are used for instantiating ILAs and are also recommended.
 
 ### Instantiating FATE
 
@@ -139,6 +154,8 @@ In your project, instantiate famsev2_top and connect the DFI interface to the MI
         .mig_wrdata       (mig_wrdata),
         .mig_wrdata_mask  (mig_wrdata_mask)
     );
+
+For more details, refer to the reference code under `wrapper/` or the reference project in the Release.
 
 ### Configuration Parameters
 

@@ -69,6 +69,17 @@ FATE 采用跨时钟域设计，分为低频域和高频域，二者通过异步
 
 ![FATE架构图](./doc/fate-architecture.png "fate architecture")
 
+## 仓库结构
+
+    doc/            # 模块级说明文档
+    fifos/          # FATE 所需 fifo 的仿真测试环境
+    tcl/            # FATE 所需 IP 的 tcl 脚本
+    vsrc/           # FATE 源码
+    wrapper/        # FATE wrapper 的参考代码
+    LICENSE.txt     # 开源协议
+    README_zh.md    # 本文档
+    README.md       # 本文档的英文版
+
 ## 环境依赖
 
 - FPGA 平台：AMD Virtex™ UltraScale+™ VU19P FPGA
@@ -82,6 +93,10 @@ FATE 采用跨时钟域设计，分为低频域和高频域，二者通过异步
 - HostMC：任何符合 DFI 3.1 接口的内存控制器 IP
 
 ## 部署说明
+
+### 例化必要的 IP
+
+在您的项目中例化 FATE 所需 IP，使用 Vivado 2024.2 执行 `tcl/ip_export_mig_phy.tcl` 脚本，该脚本将生成符合要求的 MIG PHY IP。另外，`tcl/` 目录下的另外三个用于实例化 ILA 的 tcl 脚本也是有益的，也建议实例化。
 
 ### 例化 FATE
 
@@ -139,6 +154,8 @@ FATE 采用跨时钟域设计，分为低频域和高频域，二者通过异步
         .mig_wrdata       (mig_wrdata),
         .mig_wrdata_mask  (mig_wrdata_mask)
     );
+
+更多细节可以参考 `wrapper/` 路径下的参考代码或者 Release 中的参考工程。
 
 ### 配置参数
 
