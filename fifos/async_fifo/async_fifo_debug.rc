@@ -1,0 +1,97 @@
+Magic 271485
+Revision Verdi_P-2019.06-SP1-1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 0 25 2194 743 449 152
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "/nfs/home/yecongrong/FAMSEV2/famsev2/fifos/build/wave.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+windowTimeUnit 53200ps
+
+; waveform viewport range
+zoom 0.000000 36.563139 53200p
+cursor 7.81662512125
+marker 12.500000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 0
+; marker line index
+markerPos 8
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "/nfs/home/yecongrong/FAMSEV2/famsev2/fifos/build/wave.fsdb"
+addSignal -h 15 /tb_async_fifo_ultra_low_latency/u_fifo/rd_clk
+addSignal -h 15 -holdScope rd_rst_n
+addSignal -h 15 -holdScope rd_addr[5:0]
+addSignal -h 15 -holdScope rd_bin[6:0]
+addSignal -h 15 -holdScope rd_data[255:0]
+addSignal -h 15 -holdScope empty
+addSignal -h 15 -holdScope rd_en
+addSignal -h 15 -holdScope rd_pulse
+addSignal -h 15 -holdScope rd_gray[6:0]
+addSignal -h 15 -holdScope rd_gray_sync1[6:0]
+addSignal -h 15 -holdScope rd_gray_sync2[6:0]
+addSignal -h 15 -holdScope rd_valid
+addGroup "G2"
+addSignal -h 15 /tb_async_fifo_ultra_low_latency/u_fifo/wr_clk
+addSignal -h 15 -holdScope wr_rst_n
+addSignal -h 15 -holdScope wr_addr[5:0]
+addSignal -h 15 -holdScope wr_bin[6:0]
+addSignal -h 15 -holdScope wr_data[255:0]
+addSignal -h 15 -holdScope full
+addSignal -h 15 -holdScope wr_en
+addSignal -h 15 -holdScope wr_pulse
+addSignal -h 15 -holdScope wr_gray[6:0]
+addSignal -h 15 -holdScope wr_gray_sync1[6:0]
+addSignal -h 15 -holdScope wr_gray_sync2[6:0]
+addSignal -h 15 -holdScope ack
+addSignal -h 15 -holdScope wr_ack
+addGroup "G3"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+activeDirFile "" "/nfs/home/yecongrong/FAMSEV2/famsev2/fifos/build/wave.fsdb"
+
+GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
+getSignalForm close
+
+"/tb_async_fifo_ultra_low_latency"
+"/tb_async_fifo_ultra_low_latency/u_fifo"
+
+SCOPE_LIST_BEGIN
+"/tb_async_fifo_ultra_low_latency"
+"/tb_async_fifo_ultra_low_latency/u_fifo"
+SCOPE_LIST_END
+
+GETSIGNALFORM_SCOPE_HIERARCHY_END
+
+

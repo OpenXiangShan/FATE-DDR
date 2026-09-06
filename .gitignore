@@ -1,0 +1,15 @@
+*.class
+*.log
+
+.vscode/
+*.out
+*.vcd
+out/*
+log/*
+paper_data/*
+
+**/build/
+**/verdiLog/*
+
+novas.rc
+novas.conf

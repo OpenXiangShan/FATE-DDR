@@ -1,0 +1,94 @@
+Magic 271485
+Revision Verdi_P-2019.06-SP1-1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 0 25 2194 487 449 152
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "/nfs/home/yecongrong/FAMSEV2/famsev2/fifos/sync_fifo/build/wave.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+windowTimeUnit 10000ps
+
+; waveform viewport range
+zoom 0.000000 38.885000 10000p
+cursor 20.500000
+marker 13.500000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 1
+; marker line index
+markerPos 24
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "/nfs/home/yecongrong/FAMSEV2/famsev2/fifos/sync_fifo/build/wave.fsdb"
+addSignal -h 15 /sync_fifo_tb/dut/clk
+addSignal -h 15 -holdScope rst_n
+addSignal -h 15 -holdScope full
+addSignal -h 15 -holdScope wr_en
+addSignal -h 15 -holdScope wr_pulse
+addSignal -h 15 -holdScope wr_data[31:0]
+addSignal -h 15 -holdScope ack
+addSignal -h 15 -holdScope wr_ack
+addGroup "G2"
+addSignal -h 15 /sync_fifo_tb/dut/rd_en
+addSignal -h 15 -holdScope empty
+addSignal -h 15 -holdScope rd_pulse
+addSignal -h 15 -holdScope rd_data[31:0]
+addSignal -h 15 -holdScope rd_valid
+addGroup "G3"
+addSignal -h 15 /sync_fifo_tb/dut/BANK_0[31:0]
+addSignal -h 15 -holdScope BANK_1[31:0]
+addSignal -h 15 -holdScope BANK_2[31:0]
+addSignal -h 15 -holdScope BANK_3[31:0]
+addSignal -h 15 -holdScope BANK_4[31:0]
+addSignal -h 15 -holdScope BANK_5[31:0]
+addSignal -h 15 -holdScope BANK_6[31:0]
+addSignal -h 15 -holdScope BANK_7[31:0]
+addGroup "G4"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+activeDirFile "" "/nfs/home/yecongrong/FAMSEV2/famsev2/fifos/sync_fifo/build/wave.fsdb"
+
+GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
+getSignalForm close
+
+"/sync_fifo_tb"
+"/sync_fifo_tb/dut"
+
+SCOPE_LIST_BEGIN
+"/sync_fifo_tb"
+"/sync_fifo_tb/dut"
+SCOPE_LIST_END
+
+GETSIGNALFORM_SCOPE_HIERARCHY_END
+
+
