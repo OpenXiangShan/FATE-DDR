@@ -1,8 +1,8 @@
-# FATE: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator
+# FATE-DDR: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator
 
-> For the Chinese version, see [README_zh.md](./README_zh.md).
+> FATE-DDR is the full name of the repository; FATE is the abbreviation. For the Chinese version, see [README_zh.md](./README_zh.md).
 
-- [FATE: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator](#fate-fpga-based-frequency-adaptive-timing-accurate-ddr-phy-emulator)
+- [FATE-DDR: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator](#fate-ddr-fpga-based-frequency-adaptive-timing-accurate-ddr-phy-emulator)
   - [Overview](#overview)
   - [Background and Motivation](#background-and-motivation)
   - [Main Features](#main-features)
@@ -22,7 +22,7 @@
 
 ## Overview
 
-FATE is an FPGA-based DDR PHY emulator. It is primarily used for FPGA-based pre-silicon performance evaluation of processors, calibrating performance evaluation results on FPGA platforms by accurately reproducing the timing relationship between the CPU and the memory subsystem. It connects the MC's DFI interface to a high-speed DDR PHY interface on the FPGA (e.g., Xilinx MIG PHY), and while preserving the DFI protocol semantics, it achieves frequency-adaptive and cycle-accurate memory behavior emulation.
+FATE-DDR (abbreviated as FATE) is a DDR PHY emulator for Xilinx FPGA platforms. It is designed to solve the frequency mismatch problem between the CPU and DDR memory in FPGA-based pre-silicon performance evaluation of processors. It can correctly adapt a DFI 3.1-compliant memory controller (MC) to the Xilinx MIG PHY while preserving the DFI protocol semantics. By accurately reconstructing the timing relationship between the CPU and DDR memory, it achieves cycle-accurate memory behavior emulation and provides reliable timing guarantees for pre-silicon performance evaluation.
 
 > Naming note:
 > During early development and internal engineering, this project used the codename FAMSE, and the source code contains many module names such as famsev2. FAMSE is FATE, and FATE is FAMSE. FATE is the name finalized when the paper was officially published, while FAMSE was the internal codename used earlier. Because the original meaning of FAMSE is no longer suitable for a public project, we uniformly use the name FATE in the public release. The renaming does not affect the understanding or use of the tool.
@@ -31,11 +31,11 @@ FATE is an FPGA-based DDR PHY emulator. It is primarily used for FPGA-based pre-
 
 In the processor design flow, accurate and fast pre-silicon performance evaluation is crucial. Pure software simulation provides high accuracy but extremely low speed, while commercial hardware emulation platforms are fast but very expensive. FPGA-based evaluation approaches offer the ability to run full workloads at an acceptable cost. However, the CPU on an FPGA can only run at relatively low frequencies (typically tens of MHz), while DDR memory must run at hundreds of MHz or even higher due to physical-layer constraints. This frequency mismatch causes memory access latency to appear significantly shorter relative to the CPU, making the memory behave like a huge cache and severely distorting performance measurements.
 
-FATE solves this problem in the following ways:
+FATE achieves accurate timing reconstruction through the following technical means:
 
-- Inserting a transparent DFI-to-DFI conversion layer between HostMC and TargetPHY;
+- Inserting a transparent DFI-to-DFI conversion layer between HostMC and TargetPHY to avoid losing DFI semantics;
 
-- Proxying refresh, ZQ calibration, and TargetPHY-specific VTT operations in FATE;
+- Proxying refresh, ZQ calibration, and TargetPHY-specific VTT operations in FATE to meet DDR physical constraints;
 
 - Converting HostMC read/write requests into ACT–RD–PRE / ACT–WR–PRE sequences, keeping rows closed by default;
 
@@ -102,9 +102,9 @@ FATE adopts a cross-clock-domain design and is divided into a low-frequency doma
 
 - EDA tool: Vivado 2024.2
 
-- Simulator：VCS
+- Simulator: VCS
 
-- TargetPHY: Xilinx MIG IP（PHY-Only mode）
+- TargetPHY: Xilinx MIG IP (PHY-Only mode)
 
 - HostMC: Any memory controller IP compliant with DFI 3.1
 

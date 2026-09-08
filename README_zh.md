@@ -1,8 +1,8 @@
-# FATE: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator
+# FATE-DDR: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator
 
-> 英文版详见[README.md](./README.md).
+> FATE-DDR 为本仓库全称，FATE 为其简称。英文版详见 [README.md](./README.md)。
 
-- [FATE: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator](#fate-fpga-based-frequency-adaptive-timing-accurate-ddr-phy-emulator)
+- [FATE-DDR: FPGA-based Frequency-Adaptive Timing-Accurate DDR PHY Emulator](#fate-ddr-fpga-based-frequency-adaptive-timing-accurate-ddr-phy-emulator)
   - [概述](#概述)
   - [背景与动机](#背景与动机)
   - [主要特性](#主要特性)
@@ -22,7 +22,7 @@
 
 ## 概述
 
-FATE 是一个基于 FPGA 平台的 DDR PHY 仿真器。它主要用于基于 FPGA 的处理器硅前性能评估，通过在精准复现 CPU 与内存子系统之间的时序关系来校准 FPGA 平台上的性能评估结果。它连接 MC 的 DFI 接口与 FPGA 上的高速 DDR PHY（如 Xilinx MIG PHY）接口，在保持 DFI 协议语义的前提下，实现频率自适应与周期级精确的内存行为仿真。
+FATE-DDR（简称 FATE）是一个面向 Xilinx FPGA 平台的 DDR PHY 仿真器，主要用于解决基于 FPGA 的处理器硅前性能评估中的 CPU 与 DDR 内存频率失配问题。它能够将符合 DFI 3.1 协议的内存控制器（MC）正确适配到 Xilinx MIG PHY 上，在保持 DFI 协议语义的前提下，精准重建 CPU 与 DDR 内存之间的时序关系，实现周期级精确（cycle-accurate）的内存行为仿真，为硅前性能评估提供可靠的时序保障。
 
 > 命名说明：
 > 本项目在开发初期及内部工程中使用的代号为 FAMSE，源码中大量出现 famsev2 等模块命名。FAMSE 就是 FATE，FATE 就是 FAMSE。FATE 是在论文正式发表时确定的名称，而 FAMSE 是此前的内部代号。由于 FAMSE 的原意已不再适合公开项目，我们在公开发布时统一采用 FATE 这一名称。更名不影响该工具的理解与使用。
@@ -31,11 +31,11 @@ FATE 是一个基于 FPGA 平台的 DDR PHY 仿真器。它主要用于基于 FP
 
 在处理器设计流程中，准确且快速的硅前性能评估至关重要。纯软件仿真精度高但速度极慢，商业硬件仿真平台速度快但成本高昂。基于 FPGA 的评估方案以可接受的成本提供了运行完整工作负载的能力。然而，FPGA 上的 CPU 只能运行在较低频率（通常几十 MHz），而 DDR 内存因物理层约束必须运行在数百 MHz 甚至更高的频率。这种频率失配导致内存访问延迟相对于 CPU 被大幅缩短，使内存看起来像一个巨大的 Cache，从而严重扭曲性能测量结果。
 
-FATE 通过下述方式解决该问题：
+FATE 通过下述技术手段实现精准的时序重建：
 
-- 在 HostMC 与 TargetPHY 之间插入一个透明的 DFI-to-DFI 转换层；
+- 在 HostMC 与 TargetPHY 之间插入一个透明的 DFI-to-DFI 转换层，避免 DFI 语义丢失；
 
-- 由 FATE 代理执行刷新、ZQ 校准以及 TargetPHY 特有的 VTT 操作；
+- 由 FATE 代理执行刷新、ZQ 校准以及 TargetPHY 特有的 VTT 操作，满足 DDR 物理约束；
 
 - 将 HostMC 的读/写请求转换为 ACT–RD–PRE / ACT–WR–PRE 序列，保持行默认关闭；
 
