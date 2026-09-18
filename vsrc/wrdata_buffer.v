@@ -29,8 +29,8 @@ module wrdata_buffer (
 
     //////////////mig wrdata interface//////////////
     input           mig_wrdata_en,
-    output  [512:0] mig_wrdata,
-    output  [64:0]  mig_wrdata_mask,
+    output  [511:0] mig_wrdata,
+    output  [63:0]  mig_wrdata_mask,
     //////////////mig wrdata interface//////////////
     
     output          wrdata_filling
@@ -129,7 +129,7 @@ module wrdata_buffer (
     wire            sync_fifo_full;
     // write sync fifo if wrdata_info_in_fifo is not empty
     wire            sync_fifo_wr_en = wrdata_info_in_fifo != 576'd0;    
-    wire    [577:0] sync_fifo_wr_data = wrdata_info_in_fifo;
+    wire    [575:0] sync_fifo_wr_data = wrdata_info_in_fifo;
 
     wire            sync_fifo_rd_valid;
     wire            sync_fifo_empty;
