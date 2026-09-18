@@ -386,7 +386,7 @@ module famsev2_top (
 
     ila_famse_top i_ila_famse_top(
         .clk(       mig_clk),
-        .probe0(    dif_clk),
+        .probe0(    dfi_clk),
 
         .probe1(    ACT_CMD),
         .probe2(    RD_CMD),
