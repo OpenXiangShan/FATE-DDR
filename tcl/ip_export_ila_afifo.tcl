@@ -65,7 +65,7 @@ set ila_afifo [create_ip -name ila -vendor xilinx.com -library ip -version 6.2 -
 # User Parameters
 set_property -dict [list \
   CONFIG.C_ADV_TRIGGER {true} \
-  CONFIG.C_DATA_DEPTH {65536} \
+  CONFIG.C_DATA_DEPTH {1024} \
   CONFIG.C_EN_STRG_QUAL {1} \
   CONFIG.C_INPUT_PIPE_STAGES {1} \
   CONFIG.C_NUM_OF_PROBES {22} \
