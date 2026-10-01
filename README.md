@@ -98,9 +98,9 @@ FATE adopts a cross-clock-domain design and is divided into a low-frequency doma
 
 ## Environment Dependencies
 
-- FPGA platform: AMD Virtex™ UltraScale+™ VU19P FPGA
+- FPGA platform: AMD Virtex™ UltraScale+™ VU19P FPGA or AMD Virtex™ UltraScale+™ VU37P HBM FPGA (VCU128)
 
-- EDA tool: Vivado 2024.2
+- EDA tool: Vivado 2024.2 and vitis 2020.2
 
 - Simulator: VCS
 

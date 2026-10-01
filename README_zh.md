@@ -98,9 +98,9 @@ FATE 采用跨时钟域设计，分为低频域和高频域，二者通过异步
 
 ## 环境依赖
 
-- FPGA 平台：AMD Virtex™ UltraScale+™ VU19P FPGA
+- FPGA 平台：AMD Virtex™ UltraScale+™ VU19P FPGA 或 AMD Virtex™ UltraScale+™ VU37P HBM FPGA (VCU128)
 
-- EDA 工具：Vivado 2024.2
+- EDA 工具：Vivado 2024.2 和 vitis 2020.2
 
 - 仿真器：VCS
 
