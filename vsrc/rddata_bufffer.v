@@ -29,7 +29,7 @@ module rddata_buffer (
 
     //////////////mig rddata interface//////////////
     input           mig_rddata_en,
-    input   [512:0] mig_rddata,
+    input   [511:0] mig_rddata,
     //////////////mig rddata interface//////////////
 
     // DEBUG SIGNAL
