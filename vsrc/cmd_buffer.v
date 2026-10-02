@@ -73,7 +73,8 @@ module cmd_buffer (
     wire            cas_n_p0    = dfi_cas_n[0];
     wire            we_n_p0     = dfi_we_n[0];
 
-    wire    [16:0]  address_p1  = dfi_address[35:17];
+    // Each DFI phase occupies 18 bits; use its low 17 address bits.
+    wire    [16:0]  address_p1  = dfi_address[34:18];
     wire    [1:0]   ba_p1       = dfi_ba[3:2];
     wire    [1:0]   bg_p1       = dfi_bg[3:2];
     wire    [1:0]   cs_n_p1     = dfi_cs_n[3:2];

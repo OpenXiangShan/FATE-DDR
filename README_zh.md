@@ -108,17 +108,41 @@ FATE 采用跨时钟域设计，分为低频域和高频域，二者通过异步
 
 - HostMC：任何符合 DFI 3.1 接口的内存控制器 IP
 
+## 按实例选择 FPGA 平台
+
+将 vsrc/ 加入 Verilog include 搜索路径，并编译目录中的所有 .v 文件。
+`famse_platform.vh` 提供稳定的整数编号，不需要设置全工程的二元编译开关：
+
+```verilog
+`include "famse_platform.vh"
+famsev2_top #(.PLATFORM(`FAMSE_PLATFORM_VCU128)) u_fate (...);
+// VU19P: .PLATFORM(`FAMSE_PLATFORM_VU19P)
+```
+
+默认值为 VU19P，两个发布包均显式传参。新平台须增加编号和显式分支；未知编号会导致 elaboration 失败。
+平台参数负责 CS/rank、REF/ZQS rank 调度和写计数采样沿，不会改变 FPGA 器件、引脚或替你创建 MIG。
+
+| 平台 | FPGA 器件 | MIG 模块 / Tcl | 内存拓扑 |
+| --- | --- | --- | --- |
+| FAMSE_PLATFORM_VU19P | xcvu19p-fsva3824-2-e | mig_phy_vu19p / tcl/ip_export_mig_phy_vu19p.tcl | 双 rank SODIMM MTA16ATF2G64HZ-2G3 |
+| FAMSE_PLATFORM_VCU128 | xcvu37p-fsvh2892-2L-e | mig_phy_vcu128 / tcl/ip_export_mig_phy_vcu128.tcl | 单逻辑 rank、双物理 CS 的 clamshell |
+
+在目标工程依次 source 对应 MIG Tcl 和三个共享 ILA Tcl（ila_ctrl、ila_afifo、ila_famse_top）。
+VU19P 使用完整 mc_BG/mc_ODT；VCU128 MIG 接 mc_BG[7:0]、mc_ODT[7:0]，两个平台均接完整 mc_CS_n。
+共享 ILA 有 54 个 FAMSE 探针，更新 RTL 时应同时重新生成 ILA IP 和 LTX，不能沿用旧的 VU19P ILA 布局。
+更多配置差异、历史兼容行为及扩展方法见 [平台说明](doc/platforms_zh.md)。
+
 ## 部署说明
 
 ### 例化必要的 IP
 
-在您的项目中例化 FATE 所需 IP，使用 Vivado 2024.2 执行 `tcl/ip_export_mig_phy.tcl` 脚本，该脚本将生成符合要求的 MIG PHY IP。另外，`tcl/` 目录下的另外三个用于实例化 ILA 的 tcl 脚本也是有益的，也建议实例化。
+在您的项目中例化 FATE 所需 IP，使用 Vivado 2024.2 执行 `tcl/ip_export_mig_phy_<platform>.tcl` 脚本，该脚本将生成符合要求的 MIG PHY IP。另外，`tcl/` 目录下的另外三个用于实例化 ILA 的 tcl 脚本也是有益的，也建议实例化。
 
 ### 例化 FATE
 
 在您的项目中例化 famsev2_top，连接 DFI 接口与 MIG PHY 接口。以下为关键连接示例（伪代码）：
 
-    famsev2_top u_fate (
+    famsev2_top #(.PLATFORM(`FAMSE_PLATFORM_VU19P)) u_fate (
         .dfi_clk          (host_dfi_clk),
         .mig_clk          (mig_ui_clk),
         .rst_n            (system_rst_n),

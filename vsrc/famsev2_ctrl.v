@@ -15,7 +15,7 @@
 ***************************************************************************************/
 
 // famsev2_ctrl.v
-module famsev2_ctrl (
+module famsev2_ctrl #(parameter integer RANK_COUNT = 2) (
 
     input           mig_clk,
     input           rst_n,
@@ -121,8 +121,8 @@ module famsev2_ctrl (
     reg     [31:0]  zqs_watch_dog;
     
     localparam VTT_WATCH_DOG = 187;     // 200 - something
-    localparam REF_WATCH_DOG = 600;     // 6 us (per Rank)
-    localparam ZQS_WATCH_DOG = 60000;   // 60 ms (per Rank)
+    localparam REF_WATCH_DOG = 600;     // 3 us per command at 200 MHz; 6 us per rank with two ranks
+    localparam ZQS_WATCH_DOG = 60000;   // 300 us per command at 200 MHz; 600 us per rank with two ranks
     
     wire    vtt_wd_ov = vtt_watch_dog >= VTT_WATCH_DOG;
     wire    ref_wd_ov = ref_watch_dog >= REF_WATCH_DOG;
@@ -299,7 +299,7 @@ module famsev2_ctrl (
         if (!rst_n) begin
             refRankTurn <= 2'b10;
         end else if (ref_cmd) begin
-            refRankTurn <= ~refRankTurn;
+            refRankTurn <= (RANK_COUNT == 1) ? 2'b10 : ~refRankTurn;
         end
     end
     
@@ -311,7 +311,7 @@ module famsev2_ctrl (
         if (!rst_n) begin
             zqsRankTurn <= 2'b10;
         end else if (zqs_cmd) begin
-            zqsRankTurn <= ~zqsRankTurn;
+            zqsRankTurn <= (RANK_COUNT == 1) ? 2'b10 : ~zqsRankTurn;
         end
     end
     

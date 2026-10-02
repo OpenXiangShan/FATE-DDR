@@ -1,3 +1,4 @@
+`include "famse_platform.vh"
 // ddr_wrapper.v
 module ddr_wrapper (
     input           sys_rst,
@@ -57,21 +58,6 @@ module ddr_wrapper (
     assign ddr4_reset_n = ddr4_reset_n_int;
     assign data_compare_error = 'd0;
 
-    wire sys_clk_i;
-    wire sys_clk_o;
-
-    IBUFDS # (
-        .IBUF_LOW_PWR(          "FALSE")
-    ) u_ibufg_sys_clk (
-        .I(                     sys_clk_p),
-        .IB(                    sys_clk_n),
-        .O(                     sys_clk_i)
-    );
-
-    assign sys_clk_o = sys_clk_i;
-
-
-
     wire            dfi_clk;
     wire            mig_clk;
     wire            rst_n;
@@ -117,7 +103,7 @@ module ddr_wrapper (
         .dfi_wrdata_mask(       dfi_wrdata_mask)
     );
 
-    famsev2_top i_famsev2_top (
+    famsev2_top #(.PLATFORM(`FAMSE_PLATFORM_VU19P)) i_famsev2_top (
 
         .dfi_clk(               dfi_clk),
         .mig_clk(			    mig_clk),
@@ -190,28 +176,29 @@ module ddr_wrapper (
     assign  rst_n   = ~ddr4_rst;
     assign  calDone = init_calib_complete;
 
-    MIG_PHY u_MIG_PHY (
+    mig_phy_vu19p u_mig_phy_vu19p (
         .sys_rst(               sys_rst),
-        .sys_clk_i(             sys_clk_o),
+        .c0_sys_clk_p(          sys_clk_p),
+        .c0_sys_clk_n(          sys_clk_n),
 
-        .ddr4_ui_clk(           ddr4_clk),
-        .ddr4_ui_clk_sync_rst(  ddr4_rst),
-        .init_calib_complete(   init_calib_complete),
+        .c0_ddr4_ui_clk(           ddr4_clk),
+        .c0_ddr4_ui_clk_sync_rst(  ddr4_rst),
+        .c0_init_calib_complete(   init_calib_complete),
 
-        .ddr4_act_n(            ddr4_act_n),
-        .ddr4_adr(              ddr4_adr),
-        .ddr4_ba(               ddr4_ba),
-        .ddr4_bg(               ddr4_bg),
-        .ddr4_cke(              ddr4_cke),
-        .ddr4_odt(              ddr4_odt),
-        .ddr4_cs_n(             ddr4_cs_n),
-        .ddr4_ck_t(             ddr4_ck_t),
-        .ddr4_ck_c(             ddr4_ck_c),
-        .ddr4_reset_n(          ddr4_reset_n_int),
-        .ddr4_dm_dbi_n(         ddr4_dm_dbi_n),
-        .ddr4_dq(               ddr4_dq),
-        .ddr4_dqs_c(            ddr4_dqs_c),
-        .ddr4_dqs_t(            ddr4_dqs_t),
+        .c0_ddr4_act_n(            ddr4_act_n),
+        .c0_ddr4_adr(              ddr4_adr),
+        .c0_ddr4_ba(               ddr4_ba),
+        .c0_ddr4_bg(               ddr4_bg),
+        .c0_ddr4_cke(              ddr4_cke),
+        .c0_ddr4_odt(              ddr4_odt),
+        .c0_ddr4_cs_n(             ddr4_cs_n),
+        .c0_ddr4_ck_t(             ddr4_ck_t),
+        .c0_ddr4_ck_c(             ddr4_ck_c),
+        .c0_ddr4_reset_n(          ddr4_reset_n_int),
+        .c0_ddr4_dm_dbi_n(         ddr4_dm_dbi_n),
+        .c0_ddr4_dq(               ddr4_dq),
+        .c0_ddr4_dqs_c(            ddr4_dqs_c),
+        .c0_ddr4_dqs_t(            ddr4_dqs_t),
 
         .dBufAdr(               5'b0),
         .wrData(                wrData),

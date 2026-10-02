@@ -16,7 +16,10 @@
 
 // mig_phy_driver.v
 // only combinational logic
-module mig_phy_driver (
+`include "famse_platform.vh"
+module mig_phy_driver #(
+    parameter integer PLATFORM = `FAMSE_PLATFORM_VU19P
+) (
     // ACT CMD
     input           actReq,
     input   [1:0]   actBa,
@@ -69,12 +72,37 @@ module mig_phy_driver (
     // +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
     // we only use slot0.
     
-    assign mc_CS_n  = (actReq) ? { 6'b111111, actRank[1], actRank[1], 6'b111111, actRank[0], actRank[0] } :
+    wire we_n;
+    generate
+        case (PLATFORM)
+            `FAMSE_PLATFORM_VU19P: begin : g_vu19p
+                // Two independent ranks, selected by their active-low bits.
+                assign mc_CS_n  = (actReq) ? { 6'b111111, actRank[1], actRank[1], 6'b111111, actRank[0], actRank[0] } :
                       (rdaReq) ? { 6'b111111, rdaRank[1], rdaRank[1], 6'b111111, rdaRank[0], rdaRank[0] } :
                       (wraReq) ? { 6'b111111, wraRank[1], wraRank[1], 6'b111111, wraRank[0], wraRank[0] } :
                       (refReq) ? { 6'b111111, refRank[1], refRank[1], 6'b111111, refRank[0], refRank[0] } :
                       (zqsReq) ? { 6'b111111, zqsRank[1], zqsRank[1], 6'b111111, zqsRank[0], zqsRank[0] } : 16'hffff;
-    
+                assign winRank = (rdaReq && rdaRank == 2'b01) ? 2'd1 :
+                     (wraReq && wraRank == 2'b01) ? 2'd1 : 2'd0;
+                // Preserve the board-tested VU19P release's legacy ZQS encoding.
+                // Unlike standard ZQCS it leaves WE_n high. This is a compatibility
+                // profile, not a generic DDR4 command encoder.
+                assign we_n = rdaReq || refReq || zqsReq;
+            end
+            `FAMSE_PLATFORM_VCU128: begin : g_vcu128
+                // One logical rank split across two physical CS (clamshell).
+                assign mc_CS_n = (actReq || rdaReq || wraReq || refReq || zqsReq)
+                                ? 16'hfcfc : 16'hffff;
+                assign winRank = 2'd0;
+                // Standard ZQCS: WE_n=0, A10=0.
+                assign we_n = rdaReq || refReq;
+            end
+            default: begin : g_unsupported_platform
+                FAMSE_ERROR_UNSUPPORTED_PLATFORM invalid_platform();
+            end
+        endcase
+    endgenerate
+
     // Similar mapping rules to mc_CS_n
     assign mc_BA    = (actReq) ? { 6'b111111, actBa[1], actBa[1], 6'b111111, actBa[0], actBa[0] } :
                       (rdaReq) ? { 6'b111111, rdaBa[1], rdaBa[1], 6'b111111, rdaBa[0], rdaBa[0] } :
@@ -91,10 +119,9 @@ module mig_phy_driver (
     // rdaReq, RDA: cs_n = L, act_n = H, ras_n = H, cas_n = L, we_n = H, ap = H
     // wraReq, WRA: cs_n = L, act_n = H, ras_n = H, cas_n = L, we_n = L, ap = H
     // refReq, REF: cs_n = L, act_n = H, ras_n = L, cas_n = L, we_n = H
-    // zqsReq, ZQS: cs_n = L, act_n = H, ras_n = H, cas_n = H, we_n = H
+    // ZQS WE_n is profile-specific above; standard ZQCS uses L.
     wire ras_n   = rdaReq || wraReq || zqsReq;      // ADR_16
     wire cas_n   = zqsReq;                          // ADR_15
-    wire we_n    = rdaReq || refReq || zqsReq;      // ADR_14
     wire ap      = rdaReq || wraReq;                // ADR_10
 
     assign mc_ADR = (actReq) ? { 6'b111111, actRow[16], actRow[16], 
@@ -179,8 +206,7 @@ module mig_phy_driver (
     // winRank == 2 means Rank2 valid
     // winRank == 3 means Rank3 valid
     // read pg150 or pg353 for more details
-    assign winRank = (rdaReq && rdaRank == 2'b01) ? 2'd1 :
-                     (wraReq && wraRank == 2'b01) ? 2'd1 : 2'd0;
+
 
     assign mcRdCAS = rdaReq;
     assign mcWrCAS = wraReq;

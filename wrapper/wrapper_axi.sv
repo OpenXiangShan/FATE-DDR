@@ -1,3 +1,4 @@
+`include "famse_platform.vh"
 `include "DWC_ddr_umctl2_all_includes.svh"
 module ddr4_wrapper (
 ddr_ck_t,
@@ -119,7 +120,8 @@ bist_dfi_frequency,
 bist_bufferen_core,
 ///////////////////mig ///////////
 sys_rst,
-ddr_clk,
+ddr_clk_p,
+ddr_clk_n,
 c0_ddr4_ui_clk_sync_rst,
 c0_init_calib_complete,
 addn_ui_clkout1,
@@ -282,7 +284,8 @@ input                               phy_bist_mode;
 input  [4:0]                        bist_dfi_frequency;
 ///////////////////mig////////////////////////
 input                               sys_rst;
-input                               ddr_clk;
+input                               ddr_clk_p;
+input                               ddr_clk_n;
 output                              addn_ui_clkout1;
 output                              addn_ui_clkout2;
 output                              c0_ddr4_ui_clk_sync_rst;
@@ -803,7 +806,7 @@ BY_mc_top i_BY_mc_top (
     .io_Phy_init_done_0(c0_init_calib_complete_r2)
 );
 
-famsev2_top i_famsev2_top (
+famsev2_top #(.PLATFORM(`FAMSE_PLATFORM_VU19P)) i_famsev2_top (
 
     .dfi_clk(			core_ddrc_core_clk),
     .mig_clk(			c0_ddr4_ui_clk),
@@ -862,10 +865,11 @@ famsev2_top i_famsev2_top (
 //                         MIG PHY ONLY instantiation
 //===========================================================================
 
-ddr4_0 u_ddr4_0
+mig_phy_vu19p u_mig_phy_vu19p
     (
      .sys_rst              (sys_rst),
-	 .c0_sys_clk_i  	   (ddr_clk),
+	 .c0_sys_clk_p         (ddr_clk_p),
+     .c0_sys_clk_n         (ddr_clk_n),
      .c0_ddr4_ui_clk       (c0_ddr4_ui_clk),
      .c0_ddr4_ui_clk_sync_rst (c0_ddr4_ui_clk_sync_rst),
      .c0_init_calib_complete (c0_init_calib_complete),

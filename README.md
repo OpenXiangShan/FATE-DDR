@@ -108,17 +108,46 @@ FATE adopts a cross-clock-domain design and is divided into a low-frequency doma
 
 - HostMC: Any memory controller IP compliant with DFI 3.1
 
+## Per-instance FPGA platform selection
+
+Add vsrc/ to the Verilog include path and compile its .v files. The named integer IDs in
+`famse_platform.vh` select a profile per instance, without global binary build switches:
+
+```verilog
+`include "famse_platform.vh"
+famsev2_top #(.PLATFORM(`FAMSE_PLATFORM_VCU128)) u_fate (...);
+// VU19P: .PLATFORM(`FAMSE_PLATFORM_VU19P)
+```
+
+The default remains VU19P. Unsupported IDs fail elaboration. The profile selects CS/rank
+mapping, maintenance rank scheduling, and the board-tested write-credit sampling edge.
+It does not select the FPGA part or pins or instantiate the MIG IP.
+
+Use tcl/ip_export_mig_phy_vu19p.tcl for xcvu19p-fsva3824-2-e (dual-rank
+MTA16ATF2G64HZ-2G3 SODIMM), or tcl/ip_export_mig_phy_vcu128.tcl for
+xcvu37p-fsvh2892-2L-e (one logical rank with two physical clamshell chip selects).
+Source the shared ila_ctrl, ila_afifo, and ila_famse_top Tcl scripts in the same project.
+The shared FAMSE ILA now has 54 probes; regenerate IP and LTX when updating the RTL.
+VU19P connects full mc_BG/mc_ODT buses; VCU128 connects only their low eight bits.
+Both use the full mc_CS_n bus.
+
+Compatibility note: VU19P retains the original falling-edge write-credit counter and
+legacy ZQS encoding (WE_n high, unlike standard DDR4 ZQCS). VCU128 retains its rising-edge
+counter and standard ZQCS encoding. These preserve the tested release behavior; they are
+not claims that the DDR4 ZQCS truth table depends on the board. The shared ODT implementation
+also retains ODT0 pulses with ODT1 low and is not a generic multi-rank ODT scheduler.
+
 ## Deployment Instructions
 
 ### Instantiating the Required IPs
 
-In your project, instantiate the IPs required by FATE. Use Vivado 2024.2 to execute the `tcl/ip_export_mig_phy.tcl` script, which will generate a MIG PHY IP that meets the requirements. In addition, the other three Tcl scripts in the `tcl/` directory are used for instantiating ILAs and are also recommended.
+In your project, instantiate the IPs required by FATE. Use Vivado 2024.2 to execute the `tcl/ip_export_mig_phy_<platform>.tcl` script, which will generate a MIG PHY IP that meets the requirements. In addition, the other three Tcl scripts in the `tcl/` directory are used for instantiating ILAs and are also recommended.
 
 ### Instantiating FATE
 
 In your project, instantiate famsev2_top and connect the DFI interface to the MIG PHY interface. The following is a key connection example (pseudocode):
 
-    famsev2_top u_fate (
+    famsev2_top #(.PLATFORM(`FAMSE_PLATFORM_VU19P)) u_fate (
         .dfi_clk          (host_dfi_clk),
         .mig_clk          (mig_ui_clk),
         .rst_n            (system_rst_n),
